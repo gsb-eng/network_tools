@@ -24,8 +24,7 @@ def main(dest_name, port, max_hops):
         recv_socket, send_socket = create_sockets(ttl)
         recv_socket.bind(("", port))
         send_socket.sendto("", (dest_name, port))
-        curr_addr = None
-        curr_name = None
+        curr_addr = curr_name = None
         try:
             _, curr_addr = recv_socket.recvfrom(512)
             curr_addr = curr_addr[0]
@@ -43,6 +42,7 @@ def main(dest_name, port, max_hops):
             curr_host = "%s (%s)" % (curr_name, curr_addr)
         else:
             curr_host = "*"
+
         print "%d\t%s" % (ttl, curr_host)
 
         ttl += 1
@@ -60,6 +60,7 @@ if __name__ == "__main__":
                       help="Max hops before giving up [default: %default]",
                       default=30, metavar="MAXHOPS")
     options, args = parser.parse_args()
+
     if len(args) != 1:
         parser.error()
     else:
