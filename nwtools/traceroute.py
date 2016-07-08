@@ -17,15 +17,16 @@ def create_sockets(ttl):
     send_socket.setsockopt(socket.SOL_IP, socket.IP_TTL, ttl)
     return recv_socket, send_socket
 
-def main(dest_name, port, max_hops):
+def main(dest_name, port, max_hops, ttl):
     dest_addr = socket.gethostbyname(dest_name)
-    ttl = 1
     while True:
         recv_socket, send_socket = create_sockets(ttl)
         recv_socket.bind(("", port))
+        print "Sending to  : ", dest_name, port
         send_socket.sendto("", (dest_name, port))
         curr_addr = curr_name = None
         try:
+            print "Recieving......."
             _, curr_addr = recv_socket.recvfrom(512)
             curr_addr = curr_addr[0]
             try:
@@ -61,10 +62,10 @@ if __name__ == "__main__":
                       default=30, metavar="MAXHOPS")
     options, args = parser.parse_args()
 
-    if len(args) != 1:
+    if len(args) != 2:
         parser.error()
     else:
         dest_name = args[0]
     sys.exit(main(dest_name=dest_name,
                   port=int(options.port),
-                  max_hops=int(options.max_hops)))
+                  max_hops=int(options.max_hops), ttl=int(args[1])))
